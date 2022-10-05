@@ -10,7 +10,7 @@ from tensorflow.keras.layers.experimental.preprocessing import StringLookup
 np.random.seed(42)
 tf.random.set_seed(42)
 
-base_path = r"C:\Users\samue\Documents\data"
+base_path = r"" # Enter path of data folder
 words_list = []
 
 words = open(f"{base_path}/words.txt", "r").readlines()
@@ -33,10 +33,6 @@ test_samples = test_samples[val_split_idx:]
 assert len(words_list) == len(train_samples) + len(validation_samples) + len(
     test_samples
 )
-
-print(f"Total training samples: {len(train_samples)}")
-print(f"Total validation samples: {len(validation_samples)}")
-print(f"Total test samples: {len(test_samples)}")
 
 base_image_path = os.path.join(base_path, "words")
 
@@ -81,16 +77,12 @@ for label in train_labels:
 
 characters = sorted(list(characters))
 
-print("Maximum length: ", max_len)
-print("Vocab size: ", len(characters))
-
 def clean_labels(labels):
     cleaned_labels = []
     for label in labels:
         label = label.split(" ")[-1].strip()
         cleaned_labels.append(label)
     return cleaned_labels
-
 
 validation_labels_cleaned = clean_labels(validation_labels)
 test_labels_cleaned = clean_labels(test_labels)
@@ -220,6 +212,7 @@ class CTCLayer(keras.layers.Layer):
 		# At test time, just return the computed predictions
 		return y_pred
 
+	
 def build_model():
 	# Inputs to the model 128, 32
 	input_img = keras.Input(shape=(image_width, image_height, 1), name="image")
@@ -244,8 +237,6 @@ def build_model():
 	)(x)
 
 	x = keras.layers.MaxPooling2D((2, 2), name="pool2")(x)
-
-		
 
 	# We have used two max pool with pool size and strides 2.
     	# Hence, downsampled feature maps are 4x smaller. The number of
@@ -326,7 +317,6 @@ class EditDistanceCallback(keras.callbacks.Callback):
 			predictions = self.prediction_model.predict(validation_images[i])
 			edit_distances.append(calculate_edit_distance(labels, predictions).numpy())
 
-		
 		print(
 			f"Mean edit distance for epoch {epoch + 1}: {np.mean(edit_distances):.4f}"
 		)
