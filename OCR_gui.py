@@ -1,8 +1,9 @@
 import tensorflow as tf
-import tkinter as ttk
+import tkinter as tk
 from tkinter import *
 from tkinter import filedialog as fd
 from PIL import ImageTk, Image
+from tkinter import ttk
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,13 +14,30 @@ import urllib.request
 
 from tensorflow import keras
 from tensorflow.keras.layers.experimental.preprocessing import StringLookup
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+
+
+
 
 
 #main
 window=Tk()
 window.title("Handwritten word recognition")
-window.geometry("8  00x300")
+window.geometry("800x300")
 window.configure(background="black")
+
+current_value = tk.DoubleVar()
+
+def get_current_value():
+    return '{: .2f}'.format(current_value.get())
+
+
+def slider_changed(event):
+    value_label.configure(text=get_current_value())
+
+
+
 
 
 #upload command
@@ -33,8 +51,67 @@ def upload():
     #image window after image is chosen
     image = Tk()
     image.title("image uploaded")
-    image.geometry("300x300")
+    image.geometry("500x500")
+
     image.configure(background="blue")
+    slider_label = ttk.Label(
+    image,
+    text='Brightness:',
+    background="blue",
+    font="none 13 bold",
+    foreground = "white"
+        )
+
+    slider_label.grid(
+    column=6,
+    row=5,
+    sticky='w'
+        )
+    brightness=ttk.Scale(
+        image,
+        from_=0,
+        to=100,
+        orient='horizontal',
+        variable=current_value        
+        )
+    brightness.grid(
+        column=5,
+        columnspan=3,
+        row=6,
+        sticky=W)
+    current_value_label = ttk.Label(
+    image,
+    text='Current Value:',
+    background="blue",
+    font="none 13 bold",
+    foreground = "white"
+        )
+
+    current_value_label.grid(
+        row=8,
+        column=6,
+        columnspan=2,
+        sticky='n',
+        ipadx=10,
+        ipady=10
+        )
+    #######
+    value_label = ttk.Label(
+    image,
+    text=get_current_value()
+        )
+    value_label.configure(
+    background="blue",
+    font="none 13 bold",
+    foreground = "white")
+    value_label.grid(
+        row=8,
+        column=8,
+        columnspan=2,
+        sticky='n'
+        )
+
+
     #picture = ImageTk.PhotoImage(Image.open(chosen))
     print (chosen)
     #print('selected', file)
@@ -47,9 +124,18 @@ def startLearning():
     print("Working")
 
 def initTrain():
-    print("Training:")
-
+    global initLoc
+    #initLoc = fd.askopenfilenames( title='choose initial training folder')
+    initLoc=fd.askdirectory()
     
+    #print (str(initLoc))
+    #str(initLoc)
+    #####NOTE FOR BELOW IMPORT: Import calls the module, which for some reason or another is opening a new gui from scratch, need to figure out 
+    #import module1
+    exec(open('module1.py').read())
+    print("done:")
+
+
 
 
 
@@ -67,8 +153,7 @@ initialTrain=Button(window, text="Initial Training", width=25, command=initTrain
 #panel=ttk.Label(window, image=img). grid(row=3)
 
 
-
-
-
 #run the main loop
 window.mainloop()
+
+			
