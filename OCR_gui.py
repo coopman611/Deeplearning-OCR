@@ -27,14 +27,7 @@ window.title("Handwritten word recognition")
 window.geometry("800x300")
 window.configure(background="black")
 
-current_value = tk.DoubleVar()
 
-def get_current_value():
-    return '{: .2f}'.format(current_value.get())
-
-
-def slider_changed(event):
-    value_label.configure(text=get_current_value())
 
 
 
@@ -44,72 +37,54 @@ def slider_changed(event):
 def upload():
     #gets the file path to the image being called.
     chosen = fd.askopenfilenames(parent=window, title='Choose a File')
-    print(window.splitlist(chosen))
-    
-    
+    #print(window.splitlist(chosen))
+
+    imageWin = Toplevel()
+    imageWin.title("image uploaded")
+    imageWin.geometry("700x700")
+
+    imageWin.configure(background="blue")
     
     #image window after image is chosen
-    image = Tk()
-    image.title("image uploaded")
-    image.geometry("500x500")
-
-    image.configure(background="blue")
+    
     slider_label = ttk.Label(
-    image,
+    imageWin,
     text='Brightness:',
     background="blue",
     font="none 13 bold",
     foreground = "white"
-        )
+        ).grid(row=3, column=5, sticky=W)
 
-    slider_label.grid(
-    column=6,
-    row=5,
-    sticky='w'
-        )
-    brightness=ttk.Scale(
-        image,
+    ########## Slider work
+    current_value = tk.DoubleVar()
+
+    def get_current_value():
+        return '{: .2f}'.format(current_value.get())
+
+
+    def slider_changed(event):
+        value_label.configure(text=get_current_value())
+
+    brightness=tk.Scale(
+        imageWin,
         from_=0,
         to=100,
         orient='horizontal',
-        variable=current_value        
+        variable=current_value,  
+        command = slider_changed
         )
     brightness.grid(
         column=5,
-        columnspan=3,
+        columnspan=2,
         row=6,
+        ipadx=50,
+        pady=30,
         sticky=W)
-    current_value_label = ttk.Label(
-    image,
-    text='Current Value:',
-    background="blue",
-    font="none 13 bold",
-    foreground = "white"
-        )
 
-    current_value_label.grid(
-        row=8,
-        column=6,
-        columnspan=2,
-        sticky='n',
-        ipadx=10,
-        ipady=10
-        )
     #######
-    value_label = ttk.Label(
-    image,
-    text=get_current_value()
-        )
-    value_label.configure(
-    background="blue",
-    font="none 13 bold",
-    foreground = "white")
-    value_label.grid(
-        row=8,
-        column=8,
-        columnspan=2,
-        sticky='n'
-        )
+    value_label = tk.Label(imageWin, text=get_current_value())
+
+    
 
 
     #picture = ImageTk.PhotoImage(Image.open(chosen))
@@ -117,8 +92,19 @@ def upload():
     #print('selected', file)
     #image.print (file)
 
-    Label (image, text="The uploaded image: ", bg="blue", fg="white", font ="none 13 bold") .grid(row=1, column=0, sticky=W)
-    start=Button(image, text="Start", width=10, command=startLearning).grid(row=2, column=0, sticky=W)
+    Label (imageWin, text="The uploaded image: ", bg="blue", fg="white", font ="none 13 bold") .grid(row=1, column=0, sticky=W)
+    start=Button(imageWin, text="Start", width=10, command=startLearning).grid(row=2, column=0, sticky=W)
+    #############################displaying image chosen to be able to adjust brightness
+    st=''
+    #make chosen tuple a string instead 
+    for item in chosen:
+        st=st+item
+    path1=st
+    img=ImageTk.PhotoImage(Image.open(path1))
+    penel=ttk.Label(imageWin, image=img).grid(row=10, column=5, sticky=S)
+    print(img)
+    imageWin.mainloop()
+
     
 def startLearning():
     print("Working")
