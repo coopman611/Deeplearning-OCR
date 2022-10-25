@@ -41,7 +41,7 @@ def upload():
 
     imageWin = Toplevel()
     imageWin.title("image uploaded")
-    imageWin.geometry("700x700")
+    imageWin.geometry("740x500")
 
     imageWin.configure(background="blue")
     
@@ -53,7 +53,7 @@ def upload():
     background="blue",
     font="none 13 bold",
     foreground = "white"
-        ).grid(row=3, column=5, sticky=W)
+        ).grid(row=10, column=0, sticky=W)
 
     ########## Slider work
     current_value = tk.DoubleVar()
@@ -74,11 +74,11 @@ def upload():
         command = slider_changed
         )
     brightness.grid(
-        column=5,
+        column=0,
         columnspan=2,
-        row=6,
+        row=11,
         ipadx=50,
-        pady=30,
+        pady=10,
         sticky=W)
 
     #######
@@ -92,8 +92,10 @@ def upload():
     #print('selected', file)
     #image.print (file)
 
-    Label (imageWin, text="The uploaded image: ", bg="blue", fg="white", font ="none 13 bold") .grid(row=1, column=0, sticky=W)
-    start=Button(imageWin, text="Start", width=10, command=startLearning).grid(row=2, column=0, sticky=W)
+    Label (imageWin, text="The uploaded image: ", bg="blue", fg="white", font ="none 13 bold") .grid(row=18, column=0, sticky=N)
+    Label(imageWin, text="Please adjust the brightness to where the writing is still visible, but any other infractions are not", bg="blue", fg="white", font="none 13 bold").grid(row=1, column=0,sticky=W)
+    Label(imageWin, text="Hitting start will start the train process", bg="blue", fg="white", font="none 10").grid(row=2, column=0, sticky=W)
+    start=Button(imageWin, text="Start", width=10, command=startLearning).grid(row=3, column=0, sticky=W)
     #############################displaying image chosen to be able to adjust brightness
     st=''
     #make chosen tuple a string instead 
@@ -101,7 +103,7 @@ def upload():
         st=st+item
     path1=st
     img=ImageTk.PhotoImage(Image.open(path1))
-    penel=ttk.Label(imageWin, image=img).grid(row=10, column=5, sticky=S)
+    penel=ttk.Label(imageWin, image=img).grid(row=20, column=0, sticky=S)
     print(img)
     imageWin.mainloop()
 
