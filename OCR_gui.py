@@ -41,7 +41,7 @@ def upload():
 
     imageWin = Toplevel()
     imageWin.title("image uploaded")
-    imageWin.geometry("740x500")
+    imageWin.geometry("840x500")
 
     imageWin.configure(background="blue")
     
@@ -69,19 +69,18 @@ def upload():
 
 
 
-    def brightnessUpdate(e):
-        #img_for_brightness=Image.open(path1)
-        #img_brightness_obj=ImageEnhance.Brightness(img_for_brightness)
-        #factor=current_value.get()
+    def brightnessUpdate():
+        print("brightness is running")
+        #global panel
+        img_for_brightness=Image.open(path1)
+        img_brightness_obj=ImageEnhance.Brightness(img_for_brightness)
+        factor=current_value.get()
     
-        #enhanced_img=img_brightness_obj.enhance(factor)
-        #enhanced_img.save(path1)
-        path2="C:\\Users\\somer\\source\\repos\\OCR_gui\\tumblr_oz1pbalxNn1us9frso1_1280.jpg"
-        img2=ImageTk.PhotoImage(Image.open(path2))
+        enhanced_img=img_brightness_obj.enhance(factor)
+        enhanced_img.save(path1)
+        img2=ImageTk.PhotoImage(Image.open(path1))
         panel.configure(image=img2)
         panel.image=img2
-        #image_with_brightness=ttk.Label(imageWin, image=img2).grid(row=20, column=4, sticky=S)  
-        #enhanced_img.save(path1)
 
 
 
@@ -104,19 +103,15 @@ def upload():
     #######
     value_label = tk.Label(imageWin, text=get_current_value())
 
-    
 
-
-    #picture = ImageTk.PhotoImage(Image.open(chosen))
     print (chosen)
-    #print('selected', file)
-    #image.print (file)
+    
 
     Label (imageWin, text="The uploaded image: ", bg="blue", fg="white", font ="none 13 bold") .grid(row=18, column=0, sticky=N)
     Label(imageWin, text="Please adjust the brightness to where the writing is still visible, but any other infractions are not", bg="blue", fg="white", font="none 13 bold").grid(row=1, column=0,sticky=W)
     Label(imageWin, text="Hitting start will start the train process", bg="blue", fg="white", font="none 10").grid(row=2, column=0, sticky=W)
     start=Button(imageWin, text="Start", width=10, command=startLearning).grid(row=3, column=0, sticky=W)
-    updateBrightness=Button(imageWin, text="Update image", width=15, command=brightnessUpdate(panel)).grid(row=3, column=2, sticky=E)
+    updateBrightness=Button(imageWin, text="Update image", width=15, command=brightnessUpdate).grid(row=3, column=2, sticky=E)
     #############################displaying image chosen to be able to adjust brightness
     st=''
     #make chosen tuple a string instead 
@@ -126,16 +121,10 @@ def upload():
     path1=st
     global img
     img=ImageTk.PhotoImage(Image.open(path1))
-    panel=ttk.Label(imageWin, image=img).grid(row=20, column=0, sticky=S)
+    global panel
+    panel=ttk.Label(imageWin, image=img)
+    panel.grid(row=20, column=0, sticky=S)
     
-
-    #img_for_brightness=Image.open(path1)
-    #img_brightness_obj=ImageEnhance.Brightness(img_for_brightness)
-    #factor=current_value.get()
-    
-    #enhanced_img=img_brightness_obj.enhance(factor)
-    #image_with_brightness=ttk.Label(imageWin, image=img).grid(row=20, column=0, sticky=S)
-    #enhanced_img.save(path1)
     print(img)
     imageWin.mainloop()
 
