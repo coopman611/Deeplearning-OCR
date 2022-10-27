@@ -70,24 +70,26 @@ def upload():
 
 
     def brightnessUpdate():
-        print("brightness is running")
-        #global panel
+        #print("brightness is running")
+        
         img_for_brightness=Image.open(path1)
         img_brightness_obj=ImageEnhance.Brightness(img_for_brightness)
         factor=current_value.get()
-    
+        #factor=.75
         enhanced_img=img_brightness_obj.enhance(factor)
         enhanced_img.save(path1)
+        global img2
         img2=ImageTk.PhotoImage(Image.open(path1))
         panel.configure(image=img2)
         panel.image=img2
 
 
 
+
     brightness=tk.Scale(
         imageWin,
         from_=1,
-        to=10,
+        to=5,
         orient='horizontal',
         variable=current_value,  
         command = slider_changed
@@ -95,7 +97,7 @@ def upload():
     brightness.grid(
         column=0,
         columnspan=2,
-        row=11,
+        row=15,
         ipadx=50,
         pady=10,
         sticky=W)
@@ -111,7 +113,8 @@ def upload():
     Label(imageWin, text="Please adjust the brightness to where the writing is still visible, but any other infractions are not", bg="blue", fg="white", font="none 13 bold").grid(row=1, column=0,sticky=W)
     Label(imageWin, text="Hitting start will start the train process", bg="blue", fg="white", font="none 10").grid(row=2, column=0, sticky=W)
     start=Button(imageWin, text="Start", width=10, command=startLearning).grid(row=3, column=0, sticky=W)
-    updateBrightness=Button(imageWin, text="Update image", width=15, command=brightnessUpdate).grid(row=3, column=2, sticky=E)
+    updateBrightness=Button(imageWin, text="Update image", width=15, command=brightnessUpdate).grid(row=6, column=0, sticky=W, pady=5)
+
     #############################displaying image chosen to be able to adjust brightness
     st=''
     #make chosen tuple a string instead 
@@ -119,17 +122,18 @@ def upload():
         st=st+item
     global path1
     path1=st
-    global img
+    
     img=ImageTk.PhotoImage(Image.open(path1))
     global panel
     panel=ttk.Label(imageWin, image=img)
-    panel.grid(row=20, column=0, sticky=S)
+    panel.grid(row=30, column=0, sticky=S)
     
     print(img)
     imageWin.mainloop()
 
     
 def startLearning():
+    ######## Use path1 for the image path for the program, already converted to a string as well as updated properly.
     print("Working")
 
 def initTrain():
