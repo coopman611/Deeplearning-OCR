@@ -113,6 +113,7 @@ def upload():
     Label(imageWin, text="Please adjust the brightness to where the writing is still visible, but any other infractions are not", bg="blue", fg="white", font="none 13 bold").grid(row=1, column=0,sticky=W)
     Label(imageWin, text="Hitting start will start the train process", bg="blue", fg="white", font="none 10").grid(row=2, column=0, sticky=W)
     start=Button(imageWin, text="Start", width=10, command=startLearning).grid(row=3, column=0, sticky=W)
+    upload=Button(imageWin, text="Upload Image", width=10, command=uploadImage).grid(row=4, col=0, sticky=W)
     updateBrightness=Button(imageWin, text="Update image", width=15, command=brightnessUpdate).grid(row=6, column=0, sticky=W, pady=5)
 
     #############################displaying image chosen to be able to adjust brightness
@@ -135,6 +136,46 @@ def upload():
 def startLearning():
     ######## Use path1 for the image path for the program, already converted to a string as well as updated properly.
     print("Working")
+    
+def uploadImage():
+    current_dir = os.getcwd()
+    dst_path = os.path.join(current_dir, "data\\inputs")
+    lbl_path = os.path.join(current_dir, "data\\inputs.txt")
+
+    _, _, files = next(os.walk(dst_path))
+    file_count = len(files) + 1
+
+    imageName = os.path.basename(path1)
+    imageName = os.path.splitext(imageName)
+    
+    shutil.copy(path1, dst_path)
+
+    img_path = os.path.join(dst_path, imageName[0] + imageName[1])
+    newName = os.path.join(dst_path, "img" + str(file_count) + ".png")
+    os.rename(img_path, newName)
+
+    imgList = os.listdir(dst_path)
+
+    with open(lbl_path, 'r') as file:
+        # read a list of lines into data
+        data = file.readlines()
+
+    index = 4   
+
+    # iterate each line
+    for line in (imgList):
+        
+        line = os.path.basename(line)
+        line = os.path.splitext(line)
+        try:
+            data[index] = line[0] + '\n'
+            index = index + 1
+        except:
+            data.append(line[0] + '\n')
+
+    with open(lbl_path, 'w') as file:
+        # write lines from data into file
+        file.writelines(data)    
 
 def initTrain():
     global initLoc
@@ -148,8 +189,11 @@ def initTrain():
     exec(open('module1.py').read())
     print("done:")
 
-
-
+def predWord():
+    word = hr.pred_input(0)
+    predLabel = word
+    Label (window, text=predLabel, bg="black", fg="white", font="none 13 bold").grid(row=7, column=0, sticky=W)
+    Label (window, text="Is the prediction correct?", fg="white", font="none 13 bold").grid(row=8, column=0, sticky=W)
 
 
 #img=PhotoImage(file="cat.png")
@@ -159,6 +203,7 @@ Label (window, text="if you have not trained the model yet, please select 'Initi
 #buttons
 openFile=Button(window, text="UPLOAD", width=20, command=upload) .grid(row=2, column=0, sticky=W)
 initialTrain=Button(window, text="Initial Training", width=25, command=initTrain).grid(row=3, column=0, sticky=W)
+predFile=Button(window, text="Make Prediction", width=20, command=predWord).grid(row=4, column=0, sticky=W)
 #ttk.Button(window, text="Select a File", command=upload).grid(row=3, columb=1, sticky=W)
 #image for title screen
 #path1="cat.png"
