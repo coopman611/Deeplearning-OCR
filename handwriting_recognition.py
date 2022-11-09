@@ -279,7 +279,6 @@ def build_model():
 
 # Get the model.
 model = build_model()
-model.summary()
 
 
 validation_images = []
@@ -327,7 +326,7 @@ class EditDistanceCallback(keras.callbacks.Callback):
             f"Mean edit distance for epoch {epoch + 1}: {np.mean(edit_distances):.4f}"
         )
 
-epochs = 500  # To get good results this should be at least 50.
+epochs = 50  # To get good results this should be at least 50.
 
 model = build_model()
 prediction_model = keras.models.Model(
@@ -337,7 +336,7 @@ edit_distance_callback = EditDistanceCallback(prediction_model)
 
 
 # Get path for model save data
-checkpoint_path = "training_1/cp.ckpt"
+checkpoint_path = "training_2/cp.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 
 
@@ -453,11 +452,9 @@ def prep_input():
     return input_ds
 
 
-input_ds = prep_input()
-
-
 # Prediction method for input images
 def pred_input(num):
+    input_ds = prep_input()
 
     for batch in input_ds.take(1):
         batch_images = batch["image"]
@@ -472,15 +469,16 @@ def pred_input(num):
         img = (img * 255.0).numpy().clip(0, 255).astype(np.uint8)
         img = img[:, :, 0]
 
-        title = f"Prediction: {pred_texts[num]}"
+        title = f"{pred_texts[num]}"
         ax.imshow(img, cmap="gray")
         ax.set_title(title)
         ax.axis("off")
 
-    plt.show()
+        return title
 
 # Build on current training with input image
 def train_input():
-    epochs = 10
+    input_ds = prep_input()
+    epochs = 1
     ds = input_ds
     train_model(ds, epochs)      
