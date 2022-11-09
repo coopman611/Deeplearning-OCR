@@ -336,7 +336,7 @@ edit_distance_callback = EditDistanceCallback(prediction_model)
 
 
 # Get path for model save data
-checkpoint_path = "training_2/cp.ckpt"
+checkpoint_path = "training_1/cp.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 
 
