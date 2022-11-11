@@ -70,8 +70,6 @@ wrapt==1.14.1
 yarg==0.1.9
 
 REQUIRED FILES:
-Reading the files required:
-Anything with curly brackets {} after indicate that is a folder, and the contents within the folder, when downloading everything everything should be setup as shown below. Only changes will be changes made by code that should be left to the code to take care of.
 
 OCR_GUI{
   OCR_GUI.py
