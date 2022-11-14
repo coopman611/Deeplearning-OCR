@@ -4,7 +4,6 @@ CONTENTS:
 PACKAGES REQUIRED
 FILES FOR PROJECT
 INSTRUCTIONS FOR PROGRAM SETUP
-PROGRAM USAGE
 
 
 PACKAGES REQUIRED:
@@ -87,6 +86,9 @@ OCR_GUI{
   *sidenote: To get the words, you will need to unzip the I_AM_WORDS database folder, and extract words.tgz, then extract words.tar
 
 PROGRAM SETUP:
-Our project was made to be able to install all of the packages without needing to manually install all of them to avoid extra work on the user. This is why we have the requirements.txt. After ensuring that the files are all set up properly, you will want to download the packages. You will need to be able to use pip install, and you will do the command "pip install requirements.txt".
+Our project was made to be able to install all of the packages without needing to manually install all of them to avoid extra work on the user. This is why we have the requirements.txt. After ensuring that the files are all set up properly, you will want to download the packages. You will need to be able to use pip install, and you will use the command "pip install requirements.txt". 
+Once the required packages are installed, you will then go into the code. While we made tthe program as user-friendly with a GUI, there was one step that we were unable to get. This part is essential, and why the file setup is so important. In the handwriting_recognition.py you will go down to base_path, or line 26 in github, and change the directory to your own directory where you have the files all saved. Using the layout, you will provide the directory to your data folder. 
+Once done with that, the setup is done, nothing needs to be done in the OCR_GUI.py, besides running the project from that. 
+
 
 
