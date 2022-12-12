@@ -87,8 +87,9 @@ OCR_GUI{
 
 PROGRAM SETUP:
 Our project was made to be able to install all of the packages without needing to manually install all of them to avoid extra work on the user. This is why we have the requirements.txt. After ensuring that the files are all set up properly, you will want to download the packages. You will need to be able to use pip install, and you will use the command "pip install requirements.txt". 
-Once the required packages are installed, you will then go into the code. While we made tthe program as user-friendly with a GUI, there was one step that we were unable to get. This part is essential, and why the file setup is so important. In the handwriting_recognition.py you will go down to base_path, or line 26 in github, and change the directory to your own directory where you have the files all saved. Using the layout, you will provide the directory to your data folder. 
-Once done with that, the setup is done, nothing needs to be done in the OCR_GUI.py, besides running the project from that. 
 
+Once the required packages are installed, you can then go to https://fki.tic.heia-fr.ch/databases/download-the-iam-handwriting-database this link and download the data/words.tgz. It requires you to sign in to download it, but once it is downloaded you can extract the folder. After the words folder and words.txt file are in the data folder, you can run the application by opening a command prompt window in the directory where the application is saved and use the command "python OCR_gui.py".
+
+The project will run without a GPU, but if you have a Nvidia GPU and want to train faster, you will need to download and install CUDA and cuDNN. You can also train on an AMD GPU, but the setup is less straight forward and will not be gone over here.
 
 
