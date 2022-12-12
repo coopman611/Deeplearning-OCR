@@ -1,12 +1,19 @@
+# Original Authors: A_K_Nain, Sayak Paul
+# This code is an extension and slight modification of the code written by the above authors. The original code can be found at
+# https://keras.io/examples/vision/handwriting_recognition/
+# The modifications and additions were made by Samuel Stubblefield
+# Purpose: This code uses TensorFlow machine learning to predict words based on images of handwriting.
+
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
 import os
+import tensorflow as tf
 
 from tensorflow import keras
 from tensorflow.keras.layers.experimental.preprocessing import StringLookup
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
+
 
 config = ConfigProto()
 config.gpu_options.allow_growth = True
@@ -22,24 +29,27 @@ tf.random.set_seed(42)
 #
 #
 
+
 # Get path for dataset
-base_path = r"C:\Users\samue\Documents\data"
+current_dir = os.getcwd()
+base_path = os.path.join(current_dir, "data")
 words_list = []
-	
+
+
 words = open(f"{base_path}/words.txt", "r").readlines()
 for line in words:
-	if line[0] == "#":
-		continue
-	if line.split(" ")[1] != "err": # We don't need to deal with errored entries
-		words_list.append(line)
+    if line[0] == "#":
+        continue
+    if line.split(" ")[1] != "err": # We don't need to deal with errored entries
+        words_list.append(line)
 
 np.random.shuffle(words_list)
-	
+        
 # Split dataset into 3 subsets: 90% for training, 5% for validation, 5% for testing
 split_idx = int(0.9 * len(words_list))
 train_samples = words_list[:split_idx]
 test_samples = words_list[split_idx:]
-	
+    
 val_split_idx = int(0.5 * len(test_samples))
 validation_samples = test_samples[:val_split_idx]
 test_samples = test_samples[val_split_idx:]
@@ -160,6 +170,7 @@ image_width = 128
 image_height = 32
 
 
+# Method to decode and resize images
 def preprocess_image(image_path, img_size=(image_width, image_height)):
     image = tf.io.read_file(image_path)
     image = tf.image.decode_png(image, 1)
@@ -168,6 +179,7 @@ def preprocess_image(image_path, img_size=(image_width, image_height)):
     return image
 
 
+# Method to vectorize image labels for efficiency
 def vectorize_label(label):
     label = char_to_num(tf.strings.unicode_split(label, input_encoding="UTF-8"))
     length = tf.shape(label)[0]
@@ -189,9 +201,24 @@ def prepare_dataset(image_paths, labels):
     return dataset.batch(batch_size).cache().prefetch(AUTOTUNE)
 
 
-train_ds = prepare_dataset(train_img_paths, train_labels_cleaned)
-validation_ds = prepare_dataset(validation_img_paths, validation_labels_cleaned)
-test_ds = prepare_dataset(test_img_paths, test_labels_cleaned)
+# Create training, validation, and testing datasets
+# train_ds = prepare_dataset(train_img_paths, train_labels_cleaned)
+# validation_ds = prepare_dataset(validation_img_paths, validation_labels_cleaned)
+# test_ds = prepare_dataset(test_img_paths, test_labels_cleaned)
+
+training_dataset_path = os.path.join(current_dir, "training_dataset")
+train_ds = tf.data.Dataset.load(training_dataset_path)
+validation_dataset_path = os.path.join(current_dir, "validation_dataset")
+validation_ds = tf.data.Dataset.load(validation_dataset_path)
+testing_dataset_path = os.path.join(current_dir, "testing_dataset")
+test_ds = tf.data.Dataset.load(testing_dataset_path)
+
+
+#
+# 
+# ---------------------------------------------------------------------------------------------------------------------
+#
+# 
 
 
 class CTCLayer(keras.layers.Layer):
@@ -280,10 +307,11 @@ def build_model():
 # Get the model.
 model = build_model()
 
-
+# Create arrays to store validation images and labels
 validation_images = []
 validation_labels = []
 
+# Run through the validation dataset and store the images and labels in their arrays
 for batch in validation_ds:
     validation_images.append(batch["image"])
     validation_labels.append(batch["label"])
@@ -291,7 +319,7 @@ for batch in validation_ds:
 
 def calculate_edit_distance(labels, predictions):
     # Get a single batch and convert its labels to sparse tensors.
-    saprse_labels = tf.cast(tf.sparse.from_dense(labels), dtype=tf.int64)
+    sparse_labels = tf.cast(tf.sparse.from_dense(labels), dtype=tf.int64)
 
     # Make predictions and convert them to sparse tensors.
     input_len = np.ones(predictions.shape[0]) * predictions.shape[1]
@@ -304,11 +332,12 @@ def calculate_edit_distance(labels, predictions):
 
     # Compute individual edit distances and average them out.
     edit_distances = tf.edit_distance(
-        sparse_predictions, saprse_labels, normalize=False
+        sparse_predictions, sparse_labels, normalize=False
     )
     return tf.reduce_mean(edit_distances)
 
 
+# Define class to print edit distances for each epoch
 class EditDistanceCallback(keras.callbacks.Callback):
     def __init__(self, pred_model):
         super().__init__()
@@ -326,13 +355,12 @@ class EditDistanceCallback(keras.callbacks.Callback):
             f"Mean edit distance for epoch {epoch + 1}: {np.mean(edit_distances):.4f}"
         )
 
-epochs = 50  # To get good results this should be at least 50.
 
+# Build model
 model = build_model()
-prediction_model = keras.models.Model(
-    model.get_layer(name="image").input, model.get_layer(name="dense2").output
-)
-edit_distance_callback = EditDistanceCallback(prediction_model)
+
+
+epochs = 50  # To get good results this should be at least 50.
 
 
 # Get path for model save data
@@ -340,27 +368,27 @@ checkpoint_path = "training_1/cp.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 
 
+# Initialize a model for predictions
+prediction_model = keras.models.Model(
+    model.get_layer(name="image").input, model.get_layer(name="dense2").output
+)
+
+
+edit_distance_callback = EditDistanceCallback(prediction_model)
+
+
 # Create a callback that saves the model's weights
 cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                  save_weights_only=True,
                                                  verbose=1)
 
-try:
-    model.load_weights(checkpoint_path)
 
-except:
-
-    # Train the model.
-    with tf.device('/gpu:0'):
-        history = model.fit(
-            train_ds,
-            validation_data=validation_ds,
-            epochs=epochs,
-            callbacks=[edit_distance_callback, cp_callback],
-        )
-
+# Method for running the model's training to prep for making predictions
 def train_model(ds, epochs):
+
+    # Attempts to train using a gpu if one is present
     try:
+        ds = ds + 10
         # Train the model.
         with tf.device('/gpu:0'):
             history = model.fit(
@@ -369,6 +397,7 @@ def train_model(ds, epochs):
                 epochs=epochs,
                 callbacks=[edit_distance_callback, cp_callback],
             )
+    # Trains with cpu if no gpu is present
     except:
         history = model.fit(
                 ds,
@@ -376,6 +405,16 @@ def train_model(ds, epochs):
                 epochs=epochs,
                 callbacks=[edit_distance_callback, cp_callback],
             )
+
+
+# Check for saved model weights from previous training
+try:
+    model.load_weights(checkpoint_path)
+
+# Train model if no weights are found
+except:
+    train_model(train_ds, epochs)
+
 
 # A utility function to decode the output of the network.
 def decode_batch_predictions(pred):
@@ -417,6 +456,7 @@ def pred_test_data():
     plt.show()
 
 
+# Method for getting the path and label for images uploaded by the user
 def get_input_image_paths_and_labels(samples):
     paths = []
     labels = []
@@ -475,6 +515,7 @@ def pred_input(num):
         ax.axis("off")
 
         return title
+
 
 # Build on current training with input image
 def train_input():
