@@ -71,7 +71,7 @@ yarg==0.1.9
 REQUIRED FILES:
 
 OCR_GUI{
-  OCR_GUI.py
+  OCR_gui.py
   handwriting_recognition.py
   requirements.txt
   data{
