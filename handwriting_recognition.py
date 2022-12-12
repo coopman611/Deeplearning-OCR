@@ -202,16 +202,9 @@ def prepare_dataset(image_paths, labels):
 
 
 # Create training, validation, and testing datasets
-# train_ds = prepare_dataset(train_img_paths, train_labels_cleaned)
-# validation_ds = prepare_dataset(validation_img_paths, validation_labels_cleaned)
-# test_ds = prepare_dataset(test_img_paths, test_labels_cleaned)
-
-training_dataset_path = os.path.join(current_dir, "training_dataset")
-train_ds = tf.data.Dataset.load(training_dataset_path)
-validation_dataset_path = os.path.join(current_dir, "validation_dataset")
-validation_ds = tf.data.Dataset.load(validation_dataset_path)
-testing_dataset_path = os.path.join(current_dir, "testing_dataset")
-test_ds = tf.data.Dataset.load(testing_dataset_path)
+train_ds = prepare_dataset(train_img_paths, train_labels_cleaned)
+validation_ds = prepare_dataset(validation_img_paths, validation_labels_cleaned)
+test_ds = prepare_dataset(test_img_paths, test_labels_cleaned)
 
 
 #
